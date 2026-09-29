@@ -1,0 +1,12 @@
+{
+  "name": "pocket-smart-ai-backend",
+  "version": "1.1.0",
+  "description": "Backend API for Pocket Smart AI - budget tracker and recommendation assistant. Zero dependencies -- built on Node's built-in http module.",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {}
+}

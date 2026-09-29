@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pocket Smart AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#182238;
+    --navy-2:#22304f;
+    --paper:#F6F2E9;
+    --paper-line:#E4DCC9;
+    --brass:#C89B3C;
+    --brass-dark:#9C7726;
+    --ink:#1E2430;
+    --ink-soft:#5B6270;
+    --good:#4C7A5D;
+    --warn:#B5793B;
+    --alert:#B5493B;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-variant-numeric:tabular-nums;
+  }
+  h1,h2,h3{
+    font-family:'Source Serif 4',serif;
+    margin:0;
+  }
+  .app{
+    max-width:1080px;
+    margin:0 auto;
+    padding:32px 20px 80px;
+  }
+  header.top{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    border-bottom:2px solid var(--navy);
+    padding-bottom:16px;
+    margin-bottom:28px;
+  }
+  header.top h1{
+    font-size:1.6rem;
+    color:var(--navy);
+    letter-spacing:0.2px;
+  }
+  header.top .tag{
+    font-size:0.85rem;
+    color:var(--ink-soft);
+  }
+
+  .balance-card{
+    background:var(--navy);
+    color:var(--paper);
+    border-radius:4px;
+    padding:28px 32px;
+    margin-bottom:24px;
+    position:relative;
+    overflow:hidden;
+  }
+  .balance-card::after{
+    content:"";
+    position:absolute;
+    right:-40px;
+    top:-40px;
+    width:160px;
+    height:160px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(200,155,60,0.25), transparent 70%);
+  }
+  .balance-card .label{
+    font-size:0.8rem;
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+    color:var(--brass);
+  }
+  .balance-card .amount{
+    font-family:'Source Serif 4',serif;
+    font-size:2.6rem;
+    margin-top:6px;
+    font-weight:600;
+  }
+  .balance-row{
+    display:flex;
+    gap:40px;
+    margin-top:18px;
+    flex-wrap:wrap;
+  }
+  .balance-row div{ font-size:0.85rem; color:#C9CEDB; }
+  .balance-row strong{ color:var(--paper); font-size:1rem; display:block; margin-top:2px; }
+
+  .grid{
+    display:grid;
+    grid-template-columns:1.1fr 1.4fr;
+    gap:24px;
+  }
+  @media (max-width:820px){ .grid{ grid-template-columns:1fr; } }
+
+  .panel{
+    background:#fff;
+    border:1px solid var(--paper-line);
+    border-radius:4px;
+    padding:22px 24px;
+    margin-bottom:20px;
+  }
+  .panel h2{
+    font-size:1.1rem;
+    color:var(--navy);
+    margin-bottom:14px;
+  }
+
+  label{
+    display:block;
+    font-size:0.78rem;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+    margin-top:12px;
+  }
+  input, select{
+    width:100%;
+    padding:9px 10px;
+    border:1px solid var(--paper-line);
+    border-radius:3px;
+    font-family:'Inter',sans-serif;
+    font-size:0.92rem;
+    background:#FCFAF4;
+  }
+  input:focus, select:focus{
+    outline:2px solid var(--brass);
+    outline-offset:1px;
+  }
+  button{
+    cursor:pointer;
+    border:none;
+    border-radius:3px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:0.88rem;
+  }
+  .btn-primary{
+    background:var(--navy);
+    color:var(--paper);
+    padding:10px 16px;
+    margin-top:16px;
+    width:100%;
+  }
+  .btn-primary:hover{ background:var(--navy-2); }
+  .btn-ghost{
+    background:transparent;
+    color:var(--ink-soft);
+    padding:4px 8px;
+  }
+  .btn-ghost:hover{ color:var(--alert); }
+
+  .budget-row{
+    margin-top:14px;
+  }
+  .budget-row .top-line{
+    display:flex;
+    justify-content:space-between;
+    font-size:0.85rem;
+    margin-bottom:4px;
+  }
+  .bar{
+    height:7px;
+    background:var(--paper-line);
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .bar > span{
+    display:block;
+    height:100%;
+    background:var(--good);
+  }
+  .bar.warn > span{ background:var(--warn); }
+  .bar.alert > span{ background:var(--alert); }
+
+  .ledger-entry{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 0;
+    border-bottom:1px dashed var(--paper-line);
+    font-size:0.9rem;
+  }
+  .ledger-entry:last-child{ border-bottom:none; }
+  .ledger-entry .cat{
+    font-weight:600;
+    color:var(--navy);
+  }
+  .ledger-entry .note{
+    color:var(--ink-soft);
+    font-size:0.8rem;
+  }
+  .ledger-entry .amt{
+    font-family:'Source Serif 4',serif;
+    font-weight:600;
+  }
+  .empty{
+    color:var(--ink-soft);
+    font-size:0.88rem;
+    font-style:italic;
+    padding:8px 0;
+  }
+
+  .tip{
+    border-left:3px solid var(--ink-soft);
+    background:#FCFAF4;
+    padding:10px 14px;
+    margin-bottom:10px;
+    font-size:0.88rem;
+    border-radius:2px;
+  }
+  .tip.alert{ border-color:var(--alert); }
+  .tip.warning{ border-color:var(--warn); }
+  .tip.good{ border-color:var(--good); }
+  .tip.info{ border-color:var(--brass-dark); }
+  .tip .cat-label{
+    display:block;
+    font-size:0.72rem;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    color:var(--ink-soft);
+    margin-bottom:2px;
+  }
+
+  .two-col{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="top">
+    <h1>Pocket Smart AI</h1>
+    <span class="tag">your budget &amp; recommendation buddy</span>
+  </header>
+
+  <div class="balance-card">
+    <div class="label">Remaining this period</div>
+    <div class="amount" id="remainingAmt">₹0</div>
+    <div class="balance-row">
+      <div>Income <strong id="incomeAmt">₹0</strong></div>
+      <div>Spent <strong id="spentAmt">₹0</strong></div>
+      <div>Categories tracked <strong id="catCount">0</strong></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT: inputs -->
+    <div>
+      <div class="panel">
+        <h2>Income</h2>
+        <label for="incomeInput">Monthly income (₹)</label>
+        <input type="number" id="incomeInput" placeholder="e.g. 35000" />
+        <button class="btn-primary" id="saveIncomeBtn">Save income</button>
+      </div>
+
+      <div class="panel">
+        <h2>Add an expense</h2>
+        <label for="expCategory">Category</label>
+        <select id="expCategory">
+          <option>Food</option>
+          <option>Transport</option>
+          <option>Shopping</option>
+          <option>Bills</option>
+          <option>Entertainment</option>
+          <option>Other</option>
+        </select>
+        <div class="two-col">
+          <div>
+            <label for="expAmount">Amount (₹)</label>
+            <input type="number" id="expAmount" placeholder="e.g. 250" />
+          </div>
+          <div>
+            <label for="expDate">Date</label>
+            <input type="date" id="expDate" />
+          </div>
+        </div>
+        <label for="expNote">Note (optional)</label>
+        <input type="text" id="expNote" placeholder="e.g. lunch with friends" />
+        <button class="btn-primary" id="addExpenseBtn">Add expense</button>
+      </div>
+
+      <div class="panel">
+        <h2>Budgets by category</h2>
+        <div id="budgetList"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: ledger + recommendations -->
+    <div>
+      <div class="panel">
+        <h2>Recommendations</h2>
+        <div id="recoList"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Recent expenses</h2>
+        <div id="expenseList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = "/api";
+
+async function api(path, opts){
+  const res = await fetch(API + path, opts);
+  if(!res.ok){
+    const err = await res.json().catch(()=>({error:"Request failed"}));
+    throw new Error(err.error || "Request failed");
+  }
+  return res.json();
+}
+
+function money(n){
+  return "₹" + Number(n || 0).toLocaleString("en-IN");
+}
+
+async function loadAll(){
+  const [summary, expenses, recos] = await Promise.all([
+    api("/summary"),
+    api("/expenses"),
+    api("/recommendations"),
+  ]);
+  renderSummary(summary);
+  renderBudgets(summary);
+  renderExpenses(expenses);
+  renderRecos(recos);
+  document.getElementById("incomeInput").value = summary.income || "";
+}
+
+function renderSummary(s){
+  document.getElementById("incomeAmt").textContent = money(s.income);
+  document.getElementById("spentAmt").textContent = money(s.totalSpend);
+  document.getElementById("remainingAmt").textContent = money(s.remaining);
+  document.getElementById("catCount").textContent = Object.keys(s.spendByCategory).length;
+}
+
+function renderBudgets(s){
+  const el = document.getElementById("budgetList");
+  el.innerHTML = "";
+  s.budgets.forEach(b => {
+    const spent = s.spendByCategory[b.category] || 0;
+    const pct = b.limit > 0 ? Math.min((spent / b.limit) * 100, 100) : 0;
+    let cls = "";
+    if (spent / b.limit >= 1) cls = "alert";
+    else if (spent / b.limit >= 0.8) cls = "warn";
+
+    const row = document.createElement("div");
+    row.className = "budget-row";
+    row.innerHTML = `
+      <div class="top-line">
+        <span>${b.category}</span>
+        <span>${money(spent)} / ${money(b.limit)}</span>
+      </div>
+      <div class="bar ${cls}"><span style="width:${pct}%"></span></div>
+    `;
+    el.appendChild(row);
+  });
+}
+
+function renderExpenses(expenses){
+  const el = document.getElementById("expenseList");
+  if(expenses.length === 0){
+    el.innerHTML = '<div class="empty">No expenses yet. Add your first one on the left.</div>';
+    return;
+  }
+  el.innerHTML = "";
+  expenses.slice(0, 15).forEach(e => {
+    const row = document.createElement("div");
+    row.className = "ledger-entry";
+    row.innerHTML = `
+      <div>
+        <div class="cat">${e.category}</div>
+        <div class="note">${e.note ? e.note + " · " : ""}${e.date}</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="amt">${money(e.amount)}</div>
+        <button class="btn-ghost" data-id="${e.id}" title="Delete">✕</button>
+      </div>
+    `;
+    row.querySelector("button").addEventListener("click", async () => {
+      await api(`/expenses/${e.id}`, { method: "DELETE" });
+      loadAll();
+    });
+    el.appendChild(row);
+  });
+}
+
+function renderRecos(recos){
+  const el = document.getElementById("recoList");
+  el.innerHTML = "";
+  recos.forEach(r => {
+    const div = document.createElement("div");
+    div.className = "tip " + r.level;
+    div.innerHTML = `<span class="cat-label">${r.category}</span>${r.message}`;
+    el.appendChild(div);
+  });
+}
+
+document.getElementById("saveIncomeBtn").addEventListener("click", async () => {
+  const amount = document.getElementById("incomeInput").value;
+  if(!amount) return;
+  await api("/income", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ amount }) });
+  loadAll();
+});
+
+document.getElementById("addExpenseBtn").addEventListener("click", async () => {
+  const category = document.getElementById("expCategory").value;
+  const amount = document.getElementById("expAmount").value;
+  const note = document.getElementById("expNote").value;
+  const date = document.getElementById("expDate").value;
+  if(!amount) return;
+  await api("/expenses", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ category, amount, note, date }) });
+  document.getElementById("expAmount").value = "";
+  document.getElementById("expNote").value = "";
+  loadAll();
+});
+
+document.getElementById("expDate").valueAsDate = new Date();
+loadAll();
+</script>
+</body>
+</html>
